@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualize CSV Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div>
+        <canvas id="Chart"></canvas>
+    </div>
+
+
+    <script>
+        async function getData() {  
+            const response = await fetch("topuniversities.csv"); //fetches dataset
+            const data = await response.text();
+            const rows = data.split("\n").slice(1); //splits into rows
+            const names = []; //years array
+            const scores = []; //temperature array
+            rows.forEach((elem) => {
+                const row = elem.split(",");
+                const name = row[2];
+                const score = row[3];
+                names.push(name); //appends years
+                scores.push(parseFloat(score)); //appends temperature
+            });
+            return { names, scores };
+        }
+       
+        async function createChart() {
+            const ctx = document.getElementById('Chart');
+            const data = await getData();
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.names, //x axis as years
+                    datasets: [{
+                        label: 'Scores of top universities in asia',
+                        data: data.scores, //sets data as temperature
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        createChart()
+  </script>
+
+
+</body>
+</html>
